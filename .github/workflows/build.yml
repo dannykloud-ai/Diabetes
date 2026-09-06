@@ -19,21 +19,65 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Vytvorenie zakladnej struktury
+      - name: Vytvorenie kompletnej Android struktury
         run: |
           mkdir -p app/src/main/java
+          
+          # Presun kotlin suboru do spracovanej struktury
           find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \; 2>/dev/null || true
+
+          # Vytvorenie settings.gradle
+          if [ ! -f "settings.gradle" ]; then
+            echo "rootProject.name = 'Cukrovka'" > settings.gradle
+            echo "include ':app'" >> settings.gradle
+          fi
+
+          # Vytvorenie root build.gradle
+          if [ ! -f "build.gradle" ]; then
+            echo "plugins { id 'com.android.application' version '8.1.0' apply false }" > build.gradle
+          fi
+
+          # Vytvorenie app/build.gradle
+          if [ ! -f "app/build.gradle" ]; then
+            cat << 'EOF' > app/build.gradle
+            plugins {
+                id 'com.android.application'
+            }
+            android {
+                namespace 'com.example.cukrovka'
+                compileSdk 34
+                defaultConfig {
+                    applicationId "com.example.cukrovka"
+                    minSdk 24
+                    targetSdk 34
+                    versionCode 1
+                    versionName "1.0"
+                }
+            }
+            EOF
+          fi
+
+          # Vytvorenie AndroidManifest.xml
+          if [ ! -f "app/src/main/AndroidManifest.xml" ]; then
+            cat << 'EOF' > app/src/main/AndroidManifest.xml
+            <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+                <application android:label="Cukrovka">
+                    <activity android:name=".MainActivitz" android:exported="true">
+                        <intent-filter>
+                            <action android:name="android.intent.action.MAIN" />
+                            <category android:name="android.intent.category.LAUNCHER" />
+                        </intent-filter>
+                    </activity>
+                </application>
+            </manifest>
+            EOF
+          fi
 
       - name: Spustenie Gradle buildu
         run: |
-          if [ -f "./gradlew" ]; then
-            chmod +x gradlew
-            ./gradlew assembleDebug
-          else
-            gradle wrapper
-            chmod +x gradlew
-            ./gradlew assembleDebug
-          fi
+          gradle wrapper
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
