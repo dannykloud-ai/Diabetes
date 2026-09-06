@@ -1,4 +1,4 @@
-name: Build Android App Complete
+ name: Build Android App Complete
 
 on:
   push:
@@ -484,7 +484,7 @@ jobs:
       run: |
         gradle wrapper --gradle-version 8.5
         chmod +x gradlew
-        ./gradlew assembleDebug
+        ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
