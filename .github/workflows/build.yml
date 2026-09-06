@@ -19,39 +19,62 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Vytvorenie suborov
+      - name: Priprava adresarov
         run: |
           mkdir -p app/src/main/java
           find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \; 2>/dev/null || true
-          
-          echo "include ':app'" > settings.gradle
-          echo "plugins { id 'com.android.application' version '8.1.0' apply false }" > build.gradle
-          
-          mkdir -p app
-          echo "plugins { id 'com.android.application' }" > app/build.gradle
-          echo "android {" >> app/build.gradle
-          echo " namespace 'com.example.cukrovka'" >> app/build.gradle
-          echo " compileSdk 34" >> app/build.gradle
-          echo " defaultConfig {" >> app/build.gradle
-          echo " applicationId 'com.example.cukrovka'" >> app/build.gradle
-          echo " minSdk 24" >> app/build.gradle
-          echo " targetSdk 34" >> app/build.gradle
-          echo " versionCode 1" >> app/build.gradle
-          echo " versionName '1.0'" >> app/build.gradle
-          echo " }" >> app/build.gradle
-          echo "}" >> app/build.gradle
 
+      - name: Vytvorenie settings.gradle
+        run: |
+          cat << 'EOF' > settings.gradle
+          include ':app'
+          EOF
+
+      - name: Vytvorenie root build.gradle
+        run: |
+          cat << 'EOF' > build.gradle
+          plugins {
+              id 'com.android.application' version '8.1.0' apply false
+          }
+          EOF
+
+      - name: Vytvorenie app build.gradle
+        run: |
+          mkdir -p app
+          cat << 'EOF' > app/build.gradle
+          plugins {
+              id 'com.android.application'
+          }
+
+          android {
+              namespace 'com.example.cukrovka'
+              compileSdk 34
+
+              defaultConfig {
+                  applicationId 'com.example.cukrovka'
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 1
+                  versionName '1.0'
+              }
+          }
+          EOF
+
+      - name: Vytvorenie AndroidManifest.xml
+        run: |
           mkdir -p app/src/main
-          echo "<manifest xmlns:android='http://schemas.android.com/apk/res/android'>" > app/src/main/AndroidManifest.xml
-          echo " <application android:label='Cukrovka'>" >> app/src/main/AndroidManifest.xml
-          echo " <activity android:name='.MainActivitz' android:exported='true'>" >> app/src/main/AndroidManifest.xml
-          echo " <intent-filter>" >> app/src/main/AndroidManifest.xml
-          echo " <action android:name='android.intent.action.MAIN' />" >> app/src/main/AndroidManifest.xml
-          echo " <category android:name='android.intent.category.LAUNCHER' />" >> app/src/main/AndroidManifest.xml
-          echo " </intent-filter>" >> app/src/main/AndroidManifest.xml
-          echo " </activity>" >> app/src/main/AndroidManifest.xml
-          echo " </application>" >> app/src/main/AndroidManifest.xml
-          echo "</manifest>" >> app/src/main/AndroidManifest.xml
+          cat << 'EOF' > app/src/main/AndroidManifest.xml
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <application android:label="Cukrovka">
+                  <activity android:name=".MainActivitz" android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
 
       - name: Spustenie Gradle
         uses: gradle/actions/setup-gradle@v3
