@@ -19,13 +19,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build with Android Builder
-        run: |
-          export ANDROID_HOME=$HOME/android-sdk
-          mkdir -p $ANDROID_HOME
-          # Stiahnutie a zostavenie pomocou základných nástrojov
-          echo "Pripravujem projekt..."
-          ./gradlew assembleDebug || ./gradlew build || echo "Skúšam alternatívny build"
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Debug APK with Gradle
+        run: ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
