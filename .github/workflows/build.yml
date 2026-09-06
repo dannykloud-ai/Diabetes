@@ -22,7 +22,7 @@ jobs:
       - name: Priprava adresarov
         run: |
           mkdir -p app/src/main/java
-          find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \; 2>/dev/null || true
+          find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \;
 
       - name: Vytvorenie settings.gradle
         run: |
@@ -60,21 +60,27 @@ jobs:
           }
           EOF
 
-      - name: Vytvorenie AndroidManifest.xml
+      - name: Priprava Manifest adresara
         run: |
           mkdir -p app/src/main
+
+      - name: Vytvorenie AndroidManifest.xml
+        run: |
           cat << 'EOF' > app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <application android:label="Cukrovka">
                   <activity android:name=".MainActivitz" android:exported="true">
                       <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
+                          <action android:name="intent.action.MAIN" />
+                          <category android:name="intent.category.LAUNCHER" />
                       </intent-filter>
                   </activity>
               </application>
           </manifest>
           EOF
+
+      - name: Vygenerovanie Gradle Wrapperu
+        run: gradle wrapper
 
       - name: Spustenie Gradle
         uses: gradle/actions/setup-gradle@v3
