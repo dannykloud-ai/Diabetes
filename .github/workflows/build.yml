@@ -31,8 +31,8 @@ jobs:
 
         cat << 'EOF' > build.gradle
         plugins {
-            id 'com.android.application' version '8.1.4' apply false
-            id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
+            id 'com.android.application' version '8.2.2' apply false
+            id 'org.jetbrains.kotlin.android' version '1.9.22' apply false
         }
         EOF
 
@@ -482,6 +482,12 @@ jobs:
 
     - name: Run Gradle Build
       run: |
-        gradle wrapper --gradle-version 8.4
+        gradle wrapper --gradle-version 8.5
         chmod +x gradlew
-        ./gradlew assem
+        ./gradlew assembleDebug
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
