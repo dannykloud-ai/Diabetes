@@ -1,4 +1,4 @@
- name: Zostavenie Android APK
+name: stavat
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Vytvorenie kompletnej Android struktury
+      - name: Vytvorenie suborov
         run: |
           mkdir -p app/src/main/java
           find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \; 2>/dev/null || true
@@ -28,10 +28,30 @@ jobs:
           echo "plugins { id 'com.android.application' version '8.1.0' apply false }" > build.gradle
           
           mkdir -p app
-          printf "plugins { id 'com.android.application' }\nandroid {\n    namespace 'com.example.cukrovka'\n    compileSdk 34\n    defaultConfig {\n        applicationId \"com.example.cukrovka\"\n        minSdk 24\n        targetSdk 34\n        versionCode 1\n        versionName \"1.0\"\n    }\n}\n" > app/build.gradle
+          echo "plugins { id 'com.android.application' }" > app/build.gradle
+          echo "android {" >> app/build.gradle
+          echo "    namespace 'com.example.cukrovka'" >> app/build.gradle
+          echo "    compileSdk 34" >> app/build.gradle
+          echo "    defaultConfig {" >> app/build.gradle
+          echo "        applicationId 'com.example.cukrovka'" >> app/build.gradle
+          echo "        minSdk 24" >> app/build.gradle
+          echo "        targetSdk 34" >> app/build.gradle
+          echo "        versionCode 1" >> app/build.gradle
+          echo "        versionName '1.0'" >> app/build.gradle
+          echo "    }" >> app/build.gradle
+          echo "}" >> app/build.gradle
 
           mkdir -p app/src/main
-          printf "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <application android:label=\"Cukrovka\">\n        <activity android:name=\".MainActivitz\" android:exported=\"true\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n    </application>\n</manifest>\n" > app/src/main/AndroidManifest.xml
+          echo "<manifest xmlns:android='http://schemas.android.com/apk/res/android'>" > app/src/main/AndroidManifest.xml
+          echo "    <application android:label='Cukrovka'>" >> app/src/main/AndroidManifest.xml
+          echo "        <activity android:name='.MainActivitz' android:exported='true'>" >> app/src/main/AndroidManifest.xml
+          echo "            <intent-filter>" >> app/src/main/AndroidManifest.xml
+          echo "                <action android:name='android.intent.action.MAIN' />" >> app/src/main/AndroidManifest.xml
+          echo "                <category android:name='android.intent.category.LAUNCHER' />" >> app/src/main/AndroidManifest.xml
+          echo "            </intent-filter>" >> app/src/main/AndroidManifest.xml
+          echo "        </activity>" >> app/src/main/AndroidManifest.xml
+          echo "    </application>" >> app/src/main/AndroidManifest.xml
+          echo "</manifest>" >> app/src/main/AndroidManifest.xml
 
       - name: Spustenie Gradle
         uses: gradle/actions/setup-gradle@v3
