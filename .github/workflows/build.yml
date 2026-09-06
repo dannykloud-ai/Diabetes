@@ -454,7 +454,7 @@ jobs:
                 }
             }
 
-            override fun onDestroy() {
+            override onDestroy() {
                 super.onDestroy()
                 coroutineScope.cancel()
             }
@@ -471,19 +471,13 @@ jobs:
         }
         EOF
 
-        cat << 'EOF' > app/src/main/res/values/themes.xml
-        <resources>
-            <style name="Theme.AppCompat.Light.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
-                <item name="windowNoTitle">true</item>
-                <item name="windowActionBar">false</item>
-            </style>
-        </resources>
-        EOF
+    - name: Generate Gradle Wrapper with explicit version
+      run: gradle wrapper --gradle-version 8.5 --distribution-type bin
 
     - name: Run Gradle Build
       run: |
-        gradle wrapper --gradle-version 8.5
         chmod +x gradlew
+        ./gradlew --version
         ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK Artifact
