@@ -1,4 +1,4 @@
-name: Build Android App
+name: Build Android App Complete
 
 on:
   push:
@@ -20,9 +20,99 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Create AndroidManifest.xml
+    - name: Generate Complete Android Project Structure
       run: |
-        mkdir -p app/src/main
+        # Vytvorenie adresárovej štruktúry
+        mkdir -p app/src/main/java/com/example/glykemiamapapp
+        mkdir -p app/src/main/res/layout
+        mkdir -p app/src/main/res/values
+
+        # 1. Root build.gradle
+        cat << 'EOF' > build.gradle
+        buildscript {
+            repositories {
+                google()
+                mavenCentral()
+            }
+            dependencies {
+                classpath 'com.android.tools.build:gradle:8.1.4'
+                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
+            }
+        }
+        allprojects {
+            repositories {
+                google()
+                mavenCentral()
+            }
+        }
+        task clean(type: Delete) {
+            delete rootProject.buildDir
+        }
+        EOF
+
+        # 2. settings.gradle
+        cat << 'EOF' > settings.gradle
+        pluginManagement {
+            repositories {
+                google()
+                mavenCentral()
+                gradlePluginPortal()
+            }
+        }
+        dependencyResolutionManagement {
+            repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+            repositories {
+                google()
+                mavenCentral()
+            }
+        }
+        rootProject.name = "GlycemiaMapApp"
+        include ':app'
+        EOF
+
+        # 3. app/build.gradle
+        cat << 'EOF' > app/build.gradle
+        plugins {
+            id 'com.android.application'
+            id 'org.jetbrains.kotlin.android'
+        }
+
+        android {
+            namespace 'com.example.glykemiamapapp'
+            compileSdk 34
+
+            defaultConfig {
+                applicationId "com.example.glykemiamapapp"
+                minSdk 24
+                targetSdk 34
+                versionCode 1
+                versionName "1.0"
+            }
+
+            buildTypes {
+                release {
+                    minifyEnabled false
+                    proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                }
+            }
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_17
+                targetCompatibility JavaVersion.VERSION_17
+            }
+            kotlinOptions {
+                jvmTarget = '17'
+            }
+        }
+
+        dependencies {
+            implementation 'androidx.core:core-ktx:1.12.0'
+            implementation 'androidx.appcompat:appcompat:1.6.1'
+            implementation 'com.google.android.material:material:1.11.0'
+            implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+        }
+        EOF
+
+        # 4. AndroidManifest.xml so všetkými oprávneniami a správnym štartom
         cat << 'EOF' > app/src/main/AndroidManifest.xml
         <?xml version="1.0" encoding="utf-8"?>
         <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -56,5 +146,40 @@ jobs:
         </manifest>
         EOF
 
-    - name: Commit and build check
-      run: echo "Manifest created successfully"
+        # 5. MainActivity.kt (funkčný kód bez pádov)
+        cat << 'EOF' > app/src/main/java/com/example/glykemiamapapp/MainActivity.kt
+        package com.example.glykemiamapapp
+
+        import android.os.Bundle
+        import android.widget.TextView
+        import androidx.appcompat.app.AppCompatActivity
+
+        class MainActivity : AppCompatActivity() {
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                val tv = TextView(this)
+                tv.text = "Glycemia Map App je úspešne spustená!"
+                tv.textSize = 20f
+                setContentView(tv)
+            }
+        }
+        EOF
+
+        # 6. Základné štýly
+        cat << 'EOF' > app/src/main/res/values/themes.xml
+        <resources>
+            <style name="Theme.AppCompat.Light.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+                <item name="windowNoTitle">true</item>
+                <item name="windowActionBar">false</item>
+            </style>
+        </resources>
+        EOF
+
+    - name: Build with Gradle
+      run: gradle assembleDebug
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
