@@ -19,14 +19,22 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug
+    - name: Find and Build Debug APK
+      run: |
+        # Nájde gradlew kdekoľvek v štruktúre a spustí build
+        GRADLEW_PATH=$(find . -name "gradlew" -type f)
+        if [ -z "$GRADLEW_PATH" ]; then
+          echo "Súbor gradlew sa nenašiel!"
+          exit 1
+        fi
+        PROJECT_DIR=$(dirname "$GRADLEW_PATH")
+        echo "Našiel som gradlew v: $PROJECT_DIR"
+        cd "$PROJECT_DIR"
+        chmod +x gradlew
+        ./gradlew assembleDebug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: '**/build/outputs/apk/debug/app-debug.apk'
