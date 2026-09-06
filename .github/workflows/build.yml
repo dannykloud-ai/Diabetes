@@ -1,4 +1,4 @@
-name: Zostavenie Android APK
+ name: Zostavenie Android APK
 
 on:
   push:
@@ -22,62 +22,21 @@ jobs:
       - name: Vytvorenie kompletnej Android struktury
         run: |
           mkdir -p app/src/main/java
-          
-          # Presun kotlin suboru do spracovanej struktury
           find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \; 2>/dev/null || true
+          
+          echo "include ':app'" > settings.gradle
+          echo "plugins { id 'com.android.application' version '8.1.0' apply false }" > build.gradle
+          
+          mkdir -p app
+          printf "plugins { id 'com.android.application' }\nandroid {\n    namespace 'com.example.cukrovka'\n    compileSdk 34\n    defaultConfig {\n        applicationId \"com.example.cukrovka\"\n        minSdk 24\n        targetSdk 34\n        versionCode 1\n        versionName \"1.0\"\n    }\n}\n" > app/build.gradle
 
-          # Vytvorenie settings.gradle
-          if [ ! -f "settings.gradle" ]; then
-            echo "rootProject.name = 'Cukrovka'" > settings.gradle
-            echo "include ':app'" >> settings.gradle
-          fi
+          mkdir -p app/src/main
+          printf "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <application android:label=\"Cukrovka\">\n        <activity android:name=\".MainActivitz\" android:exported=\"true\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n    </application>\n</manifest>\n" > app/src/main/AndroidManifest.xml
 
-          # Vytvorenie root build.gradle
-          if [ ! -f "build.gradle" ]; then
-            echo "plugins { id 'com.android.application' version '8.1.0' apply false }" > build.gradle
-          fi
-
-          # Vytvorenie app/build.gradle
-          if [ ! -f "app/build.gradle" ]; then
-            cat << 'EOF' > app/build.gradle
-            plugins {
-                id 'com.android.application'
-            }
-            android {
-                namespace 'com.example.cukrovka'
-                compileSdk 34
-                defaultConfig {
-                    applicationId "com.example.cukrovka"
-                    minSdk 24
-                    targetSdk 34
-                    versionCode 1
-                    versionName "1.0"
-                }
-            }
-            EOF
-          fi
-
-          # Vytvorenie AndroidManifest.xml
-          if [ ! -f "app/src/main/AndroidManifest.xml" ]; then
-            cat << 'EOF' > app/src/main/AndroidManifest.xml
-            <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-                <application android:label="Cukrovka">
-                    <activity android:name=".MainActivitz" android:exported="true">
-                        <intent-filter>
-                            <action android:name="android.intent.action.MAIN" />
-                            <category android:name="android.intent.category.LAUNCHER" />
-                        </intent-filter>
-                    </activity>
-                </application>
-            </manifest>
-            EOF
-          fi
-
-      - name: Spustenie Gradle buildu
-        run: |
-          gradle wrapper
-          chmod +x gradlew
-          ./gradlew assembleDebug
+      - name: Spustenie Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          arguments: assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
