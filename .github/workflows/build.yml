@@ -22,7 +22,7 @@ jobs:
       - name: Priprava adresarov
         run: |
           mkdir -p app/src/main/java
-          find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \;
+           find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \;
 
       - name: Vytvorenie settings.gradle
         run: |
@@ -93,13 +93,11 @@ jobs:
           </manifest>
           EOF
 
-      - name: Vygenerovanie Gradle Wrapperu s konkretnou verziou
-        run: gradle wrapper --gradle-version 8.4
-
-      - name: Spustenie Gradle
+      - name: Spustenie Gradle cez oficiálny akčný nástroj
         uses: gradle/actions/setup-gradle@v3
         with:
           arguments: assembleDebug
+          gradle-version: '8.4'
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
