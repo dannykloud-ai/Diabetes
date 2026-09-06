@@ -93,8 +93,8 @@ jobs:
           </manifest>
           EOF
 
-      - name: Vygenerovanie Gradle Wrapperu
-        run: gradle wrapper
+      - name: Vygenerovanie Gradle Wrapperu s konkretnou verziou
+        run: gradle wrapper --gradle-version 8.4
 
       - name: Spustenie Gradle
         uses: gradle/actions/setup-gradle@v3
