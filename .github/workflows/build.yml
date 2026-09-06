@@ -30,27 +30,27 @@ jobs:
           mkdir -p app
           echo "plugins { id 'com.android.application' }" > app/build.gradle
           echo "android {" >> app/build.gradle
-          echo "    namespace 'com.example.cukrovka'" >> app/build.gradle
-          echo "    compileSdk 34" >> app/build.gradle
-          echo "    defaultConfig {" >> app/build.gradle
-          echo "        applicationId 'com.example.cukrovka'" >> app/build.gradle
-          echo "        minSdk 24" >> app/build.gradle
-          echo "        targetSdk 34" >> app/build.gradle
-          echo "        versionCode 1" >> app/build.gradle
-          echo "        versionName '1.0'" >> app/build.gradle
-          echo "    }" >> app/build.gradle
+          echo " namespace 'com.example.cukrovka'" >> app/build.gradle
+          echo " compileSdk 34" >> app/build.gradle
+          echo " defaultConfig {" >> app/build.gradle
+          echo " applicationId 'com.example.cukrovka'" >> app/build.gradle
+          echo " minSdk 24" >> app/build.gradle
+          echo " targetSdk 34" >> app/build.gradle
+          echo " versionCode 1" >> app/build.gradle
+          echo " versionName '1.0'" >> app/build.gradle
+          echo " }" >> app/build.gradle
           echo "}" >> app/build.gradle
 
           mkdir -p app/src/main
           echo "<manifest xmlns:android='http://schemas.android.com/apk/res/android'>" > app/src/main/AndroidManifest.xml
-          echo "    <application android:label='Cukrovka'>" >> app/src/main/AndroidManifest.xml
-          echo "        <activity android:name='.MainActivitz' android:exported='true'>" >> app/src/main/AndroidManifest.xml
-          echo "            <intent-filter>" >> app/src/main/AndroidManifest.xml
-          echo "                <action android:name='android.intent.action.MAIN' />" >> app/src/main/AndroidManifest.xml
-          echo "                <category android:name='android.intent.category.LAUNCHER' />" >> app/src/main/AndroidManifest.xml
-          echo "            </intent-filter>" >> app/src/main/AndroidManifest.xml
-          echo "        </activity>" >> app/src/main/AndroidManifest.xml
-          echo "    </application>" >> app/src/main/AndroidManifest.xml
+          echo " <application android:label='Cukrovka'>" >> app/src/main/AndroidManifest.xml
+          echo " <activity android:name='.MainActivitz' android:exported='true'>" >> app/src/main/AndroidManifest.xml
+          echo " <intent-filter>" >> app/src/main/AndroidManifest.xml
+          echo " <action android:name='android.intent.action.MAIN' />" >> app/src/main/AndroidManifest.xml
+          echo " <category android:name='android.intent.category.LAUNCHER' />" >> app/src/main/AndroidManifest.xml
+          echo " </intent-filter>" >> app/src/main/AndroidManifest.xml
+          echo " </activity>" >> app/src/main/AndroidManifest.xml
+          echo " </application>" >> app/src/main/AndroidManifest.xml
           echo "</manifest>" >> app/src/main/AndroidManifest.xml
 
       - name: Spustenie Gradle
