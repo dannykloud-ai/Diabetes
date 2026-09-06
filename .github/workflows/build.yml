@@ -22,28 +22,15 @@ jobs:
 
     - name: Generate Complete Android Project Structure
       run: |
-        # Vytvorenie adresárovej štruktúry
         mkdir -p app/src/main/java/com/example/glykemiamapapp
         mkdir -p app/src/main/res/layout
         mkdir -p app/src/main/res/values
 
-        # 1. Root build.gradle
+        # 1. Root build.gradle (Opravené pre moderný Gradle)
         cat << 'EOF' > build.gradle
-        buildscript {
-            repositories {
-                google()
-                mavenCentral()
-            }
-            dependencies {
-                classpath 'com.android.tools.build:gradle:8.1.4'
-                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
-            }
-        }
-        allprojects {
-            repositories {
-                google()
-                mavenCentral()
-            }
+        plugins {
+            id 'com.android.application' version '8.1.4' apply false
+            id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
         }
         task clean(type: Delete) {
             delete rootProject.buildDir
@@ -112,7 +99,7 @@ jobs:
         }
         EOF
 
-        # 4. AndroidManifest.xml so všetkými oprávneniami a správnym štartom
+        # 4. AndroidManifest.xml so všetkými oprávneniami
         cat << 'EOF' > app/src/main/AndroidManifest.xml
         <?xml version="1.0" encoding="utf-8"?>
         <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -146,7 +133,7 @@ jobs:
         </manifest>
         EOF
 
-        # 5. MainActivity.kt (funkčný kód bez pádov)
+        # 5. MainActivity.kt
         cat << 'EOF' > app/src/main/java/com/example/glykemiamapapp/MainActivity.kt
         package com.example.glykemiamapapp
 
@@ -165,7 +152,7 @@ jobs:
         }
         EOF
 
-        # 6. Základné štýly
+        # 6. Téma
         cat << 'EOF' > app/src/main/res/values/themes.xml
         <resources>
             <style name="Theme.AppCompat.Light.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -176,7 +163,7 @@ jobs:
         EOF
 
     - name: Build with Gradle
-      run: gradle assembleDebug
+      run: ./gradlew assembleDebug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
