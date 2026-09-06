@@ -22,7 +22,7 @@ jobs:
       - name: Priprava adresarov
         run: |
           mkdir -p app/src/main/java
-           find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \;
+          find . -maxdepth 1 -name "*.kt" -exec mv {} app/src/main/java/ \;
 
       - name: Vytvorenie settings.gradle
         run: |
@@ -82,11 +82,11 @@ jobs:
         run: |
           cat << 'EOF' > app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-              <application android:label="Cukrovka">
-                  <activity android:name=".MainActivitz" android:exported="true">
+              <application android:label="Cukrovka" android:exported="true">
+                  <activity android:name=".MainActivity" android:exported="true">
                       <intent-filter>
-                          <action android:name="intent.action.MAIN" />
-                          <category android:name="intent.category.LAUNCHER" />
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
                       </intent-filter>
                   </activity>
               </application>
