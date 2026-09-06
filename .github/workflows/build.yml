@@ -1,4 +1,4 @@
-name: Build Android App Complete
+ name: Build Android App Complete
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
             }
         }
         dependencyResolutionManagement {
-            repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+            repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
             repositories {
                 google()
                 mavenCentral()
