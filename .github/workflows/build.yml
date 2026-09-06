@@ -33,6 +33,12 @@ jobs:
       - name: Vytvorenie root build.gradle
         run: |
           cat << 'EOF' > build.gradle
+          allprojects {
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
           plugins {
               id 'com.android.application' version '8.1.0' apply false
           }
