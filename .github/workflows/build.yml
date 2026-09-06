@@ -1,4 +1,4 @@
-name: stavat
+ name: stavat
 
 on:
   push:
